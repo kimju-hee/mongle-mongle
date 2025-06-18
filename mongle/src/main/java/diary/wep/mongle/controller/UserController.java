@@ -16,7 +16,7 @@ public class UserController {
 
     @GetMapping("/signup")
     public String signupPage() {
-        return "signup"; // templates/signup.html 또는 static/signup.html
+        return "signup";
     }
 
     @PostMapping("/signup")
@@ -34,13 +34,6 @@ public class UserController {
     @GetMapping("/check-email")
     public ResponseEntity<?> checkEmail(@RequestParam String email) {
         boolean isDuplicate = userService.isEmailTaken(email);
-        return ResponseEntity.ok(!isDuplicate); // 중복이 없으면 true 반환
+        return ResponseEntity.ok(!isDuplicate);
     }
-
-
-    @GetMapping("/login")
-    public String loginPage() {
-        return "login";
-    }
-    
 }
