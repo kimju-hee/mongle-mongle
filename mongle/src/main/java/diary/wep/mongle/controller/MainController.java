@@ -5,9 +5,13 @@ import diary.wep.mongle.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -16,16 +20,31 @@ public class MainController {
     private final UserRepository userRepository;
 
     @GetMapping("/main")
-    public String main(Model model, @AuthenticationPrincipal org.springframework.security.core.userdetails.User userDetails) {
-        String email = userDetails.getUsername();
-        Users user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일 없음: " + email));
+    public String main(Model model, OAuth2AuthenticationToken authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return "redirect:/login";
+        }
 
-        model.addAttribute("email", user.getEmail());
-        model.addAttribute("nickname", user.getNickname());
+        OAuth2User oAuth2User = authentication.getPrincipal();
+        Map<String, Object> attributes = oAuth2User.getAttributes();
 
+        String nickname = "익명";
+        try {
+            Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
+            if (kakaoAccount != null) {
+                Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+                if (profile != null && profile.get("nickname") != null) {
+                    nickname = profile.get("nickname").toString();
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        model.addAttribute("nickname", nickname);
         return "diary";
     }
+
 
     @GetMapping("/login-page")
     public String loginPage() {
