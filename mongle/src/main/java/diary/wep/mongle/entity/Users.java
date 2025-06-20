@@ -1,14 +1,12 @@
 package diary.wep.mongle.entity;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Users {
 
@@ -20,16 +18,16 @@ public class Users {
     @Column(name = "email", nullable = true, unique = true)
     private String email;
 
-    @Column(name = "password") // 소셜 로그인은 비밀번호가 없을 수 있으므로 nullable 허용
+    @Column(name = "password")
     private String password;
 
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Column(name = "provider") // ex) "local", "kakao"
+    @Column(name = "provider")
     private String provider;
 
-    @Column(name = "provider_id", nullable = false) // 새 필드 추가
+    @Column(name = "provider_id", nullable = false)
     private String providerId;
 
     @Builder

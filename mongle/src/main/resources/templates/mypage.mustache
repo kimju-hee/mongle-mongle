@@ -135,7 +135,7 @@ h2 {
         <a href="/diary">일기 작성</a>
         <a href="/diarylist">일기 목록</a>
         <a href="/store">스토어</a>
-        <a href="/mypage">마이페이지</a>
+        <a href="/api/user/me">마이페이지</a>
     </nav>
     <div class="user-info">
         <span class="nickname">{{nickname}} 님</span>
@@ -152,7 +152,11 @@ h2 {
         <div class="info-label">닉네임</div>
         <div class="info-value">{{nickname}}</div>
     </div>
-    <button class="btn">닉네임 수정</button>
+    <form action="/api/user/update" method="post">
+        <div class="info-label">닉네임 수정</div>
+        <input type="text" name="nickname" placeholder="새 닉네임 입력" required style="padding:0.5rem; margin-bottom:1rem; width:100%; border-radius:0.5rem; border:1px solid #ccc;">
+        <button class="btn" type="submit">닉네임 수정</button>
+    </form>
     <button class="btn">구매 아이템 보기</button>
     <form action="/logout" method="post">
         <button class="btn" type="submit">로그아웃</button>
