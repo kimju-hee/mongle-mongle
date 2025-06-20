@@ -1,0 +1,135 @@
+package diary.wep.mongle.controller;
+
+import diary.wep.mongle.entity.EmotionDiary;
+import diary.wep.mongle.entity.Emotions;
+import diary.wep.mongle.entity.Users;
+import diary.wep.mongle.repository.DiaryRepository;
+import diary.wep.mongle.repository.EmotionRepository;
+import diary.wep.mongle.repository.UserRepository;
+import diary.wep.mongle.service.DiaryService;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.time.LocalDate;
+import java.util.List;
+
+@Controller
+@RequiredArgsConstructor
+public class DiaryController {
+
+    private final DiaryRepository diaryRepository;
+    private final UserRepository userRepository;
+    private final EmotionRepository emotionRepository;
+    private final DiaryService diaryService;
+
+    @PostMapping("/api/diary")
+    public String saveDiary(@RequestParam("title") String title,
+                            @RequestParam("content") String content,
+                            HttpSession session) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return "redirect:/login-page";
+
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
+
+        Emotions defaultEmotion = emotionRepository.findById(1L)
+                .orElseThrow(() -> new IllegalArgumentException("기본 감정 없음"));
+
+        EmotionDiary diary = EmotionDiary.builder()
+                .diaryDate(LocalDate.now())
+                .title(title)
+                .content(content)
+                .user(user)
+                .emotion(defaultEmotion)
+                .build();
+
+        diaryRepository.save(diary);
+        return "redirect:/diarylist";
+    }
+
+    @GetMapping("/api/diary")
+    public ResponseEntity<List<EmotionDiary>> getDiariesByMonth(
+            @RequestParam("month") String month,
+            HttpSession session) {
+
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        List<EmotionDiary> diaries = diaryService.findByUserIdAndMonth(userId, month);
+        return ResponseEntity.ok(diaries);
+    }
+
+    @GetMapping("/api/diary/{id}")
+    public ResponseEntity<EmotionDiary> getDiaryDetail(@PathVariable Long id, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+
+        EmotionDiary diary = diaryService.findByIdAndUserId(id, userId);
+        return ResponseEntity.ok(diary);
+    }
+
+    @GetMapping("/diarylist")
+    public String diaryList(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) return "redirect:/login-page";
+
+        List<EmotionDiary> diaryList = diaryRepository.findAllByUserUserId(userId);
+        model.addAttribute("diaryList", diaryList);
+        return "diarylist";
+    }
+
+
+    @GetMapping("/diary/{id}")
+    public String diaryDetail(@PathVariable Long id, Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        EmotionDiary diary = diaryRepository.findByDiaryIdAndUserUserId(id, userId)
+                .orElseThrow(() -> new RuntimeException("일기 없음"));
+        model.addAttribute("diary", diary);
+        return "diary-detail";
+    }
+
+    @GetMapping("/diary/{id}/edit")
+    public String editDiaryForm(@PathVariable Long id, HttpSession session, Model model) {
+        Long userId = (Long) session.getAttribute("userId");
+        EmotionDiary diary = diaryRepository.findByDiaryIdAndUserUserId(id, userId)
+                .orElseThrow(() -> new RuntimeException("일기 없음"));
+        model.addAttribute("diary", diary);
+        return "diary-edit";
+    }
+
+    @PostMapping("/diary/{id}/edit")
+    public String updateDiary(@PathVariable Long id,
+                              @RequestParam String title,
+                              @RequestParam String content,
+                              HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        EmotionDiary diary = diaryRepository.findByDiaryIdAndUserUserId(id, userId)
+                .orElseThrow(() -> new RuntimeException("일기 없음"));
+
+        diary.setTitle(title);
+        diary.setContent(content);
+        diaryRepository.save(diary);
+
+        return "redirect:/diary/" + id;
+    }
+
+    @PostMapping("/diary/{id}/delete")
+    public String deleteDiary(@PathVariable Long id, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        EmotionDiary diary = diaryRepository.findByDiaryIdAndUserUserId(id, userId)
+                .orElseThrow(() -> new RuntimeException("일기 없음"));
+
+        diaryRepository.delete(diary);
+        return "redirect:/diarylist";
+    }
+
+}

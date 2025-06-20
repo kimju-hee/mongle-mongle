@@ -26,6 +26,9 @@ public class EmotionDiary {
     @Column(name = "response_text")
     private String responseText;
 
+    @Column(name = "title")
+    private String title;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
@@ -35,10 +38,14 @@ public class EmotionDiary {
     private Emotions emotion;
 
 
+
     @Builder
-    public EmotionDiary(LocalDate diaryDate, String content, String responseText) {
+    public EmotionDiary(LocalDate diaryDate, String content, String responseText, String title, Users user, Emotions emotion) {
         this.diaryDate = diaryDate;
         this.content = content;
         this.responseText = responseText;
+        this.title = title;
+        this.user =  user;
+        this.emotion = emotion;
     }
 }

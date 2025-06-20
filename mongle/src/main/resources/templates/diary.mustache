@@ -137,7 +137,8 @@
     </div>
 
     <nav class="nav-center">
-        <a href="/diary">일기 작성</a>
+        <a href="
+">일기 작성</a>
         <a href="/diarylist">일기 목록</a>
         <a href="/store">스토어</a>
         <a href="/api/user/me">마이페이지</a>
@@ -156,7 +157,7 @@
 <main>
     <div class="diary-box">
         <h2>오늘의 감정을 기록해보세요 ✍️</h2>
-        <form action="/diary" method="post">
+        <form action="/api/diary" method="post">
             <input type="text" name="title" placeholder="제목">
             <textarea name="content" placeholder="오늘의 감정을 자유롭게 적어보세요..."></textarea>
             <button class="btn" type="submit">일기 저장</button>

@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,4 +40,17 @@ public class DiaryService {
 
         diaryRepository.save(diary);
     }
+
+    public List<EmotionDiary> findByUserIdAndMonth(Long userId, String month) {
+        YearMonth ym = YearMonth.parse(month);
+        LocalDate start = ym.atDay(1);
+        LocalDate end = ym.atEndOfMonth();
+        return diaryRepository.findAllByUserUserIdAndDiaryDateBetween(userId, start, end);
+    }
+
+    public EmotionDiary findByIdAndUserId(Long diaryId, Long userId) {
+        return diaryRepository.findByDiaryIdAndUserUserId(diaryId, userId)
+                .orElseThrow(() -> new RuntimeException("일기를 찾을 수 없습니다."));
+    }
+
 }
