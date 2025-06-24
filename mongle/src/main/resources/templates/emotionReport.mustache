@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>감정 리포트</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=SUIT:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'SUIT', sans-serif;
+            background-color: #fffaf3;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        header {
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.4rem 2rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        header .logo {
+            display: flex;
+            align-items: center;
+        }
+        header .logo img {
+            height: 80px;
+            margin-right: 0.75rem;
+        }
+        nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+        nav a {
+            margin-left: 1rem;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            padding: 0.3rem 0.5rem;
+            background: linear-gradient(transparent 60%, #fff3b0 60%);
+            border-radius: 4px;
+        }
+        nav a:hover {
+            color: #ff8243;
+        }
+        main {
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+        h2 {
+            color: #444;
+        }
+        canvas {
+            max-width: 400px;
+            margin: 2rem auto;
+        }
+        form {
+            margin-bottom: 2rem;
+        }
+        .logout-btn {
+            background-color: #ffc1a1;
+            color: white;
+            font-weight: 600;
+            padding: 0.4rem 0.9rem;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .logout-btn:hover {
+            background-color: #ffa577;
+        }
+    </style>
+
+</head>
+<body>
+<header>
+    <div class="logo">
+        <img src="/images/image.png" alt="몽글몽글">
+    </div>
+    <nav>
+        <a href="/write">일기 작성</a>
+        <a href="/diarylist">일기 목록</a>
+        <a href="/store">스토어</a>
+        <a href="/mypayments">구매 목록</a>
+        <a href="/emotion/report">감정 리포트</a>
+        <a href="/api/user/me">마이페이지</a>
+    </nav>
+    <div class="user-info">
+        <span class="nickname">{{nickname}} 님</span>
+        <form action="/logout" method="post">
+            <button class="logout-btn" type="submit">로그아웃</button>
+        </form>
+    </div>
+</header>
+
+
+<main>
+    <h2>감정 리포트 📊</h2>
+
+    <form method="get" action="/emotion/report">
+        <label for="start">시작일:</label>
+        <input type="date" id="start" name="startDate">
+
+        <label for="end">종료일:</label>
+        <input type="date" id="end" name="endDate">
+
+        <button type="submit">필터 적용</button>
+    </form>
+
+    <canvas id="emotionChart"></canvas>
+
+    <script id="emotion-data" type="application/json">
+      {{{emotionStatsJson}}}
+    </script>
+
+    <script>
+        const rawData = document.getElementById('emotion-data').textContent;
+        const emotionStats = JSON.parse(rawData);
+
+        const labels = Object.keys(emotionStats);
+        const data = Object.values(emotionStats);
+
+        const backgroundColors = [
+            '#ffd166', '#ef476f', '#06d6a0', '#118ab2', '#f78c6b', '#8d5a97', '#70c1b3',
+            '#f4d35e', '#ee6c4d', '#c44536', '#1982c4', '#6a0572', '#83c5be', '#ffb5a7',
+            '#adb5bd', '#ffafcc', '#9a8c98', '#e07a5f', '#fcbf49', '#06a77d'
+        ];
+
+        new Chart(document.getElementById('emotionChart'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: backgroundColors.slice(0, labels.length),
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    </script>
+</main>
+</body>
+</html>

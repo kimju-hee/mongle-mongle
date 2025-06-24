@@ -1,17 +1,22 @@
 package diary.wep.mongle.controller;
 
 import diary.wep.mongle.dto.KakaoApproveResponse;
+import diary.wep.mongle.entity.Payments;
+import diary.wep.mongle.repository.PaymentRepository;
 import diary.wep.mongle.service.KakaoPayService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class StorePaymentController {
 
     private final KakaoPayService kakaoPayService;
+    private final PaymentRepository paymentRepository;
 
     @PostMapping("/pay/ready")
     public String kakaoPayReady(@RequestParam("itemId") Long itemId, HttpSession session) {
@@ -38,4 +43,12 @@ public class StorePaymentController {
     public String kakaoPayFail() {
         return "redirect:/store?fail=true";
     }
+
+    @GetMapping("/api/user/purchases")
+    @ResponseBody
+    public List<Payments> getUserPurchases(HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        return paymentRepository.findAllWithItemByUserId(userId);
+    }
+
 }

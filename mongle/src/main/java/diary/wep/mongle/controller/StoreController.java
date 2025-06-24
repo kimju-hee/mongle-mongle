@@ -15,7 +15,10 @@ public class StoreController {
     private final ItemRepository itemRepository;
 
     @GetMapping("/store")
-    public String store(Model model) {
+    public String store(HttpSession session, Model model) {
+        String nickname = (String) session.getAttribute("nickname");
+
+        model.addAttribute("nickname", nickname);
         model.addAttribute("items", itemRepository.findAll());
         return "store";
     }

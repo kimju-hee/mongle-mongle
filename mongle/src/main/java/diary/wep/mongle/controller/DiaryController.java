@@ -35,12 +35,13 @@ public class DiaryController {
     public String redirectToDiary(HttpSession session, Model model) {
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) return "redirect:/login-page";
+        String nickname = (String) session.getAttribute("nickname");
 
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
 
         model.addAttribute("nickname", user.getNickname());
-        return "diary"; // diary.mustache 템플릿을 그대로 사용
+        return "diary";
     }
 
 
@@ -52,6 +53,7 @@ public class DiaryController {
 
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) return "redirect:/login-page";
+        String nickname = (String) session.getAttribute("nickname");
 
         Users user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자 없음"));
@@ -105,9 +107,12 @@ public class DiaryController {
     @GetMapping("/diarylist")
     public String diaryList(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
+        String nickname = (String) session.getAttribute("nickname");
+
         if (userId == null) return "redirect:/login-page";
 
         List<EmotionDiary> diaryList = diaryRepository.findAllByUserUserId(userId);
+        model.addAttribute("nickname", nickname);
         model.addAttribute("diaryList", diaryList);
         return "diarylist";
     }
