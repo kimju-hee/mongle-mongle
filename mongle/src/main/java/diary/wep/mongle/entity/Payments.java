@@ -43,12 +43,14 @@ public class Payments {
     private Items item;
 
     @Builder
-    public Payments(String status, String method, Integer amount, String kakaoTid, LocalDate paidAt) {
+    public Payments(String status, String method, Integer amount, String kakaoTid, LocalDate paidAt, Users user, Items item) {
         this.status = status;
         this.method = method;
         this.amount = amount;
         this.kakaoTid = kakaoTid;
         this.paidAt = paidAt;
+        this.user = user;
+        this.item = item;
     }
 
 }

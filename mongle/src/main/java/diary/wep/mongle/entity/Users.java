@@ -31,7 +31,8 @@ public class Users {
     private String providerId;
 
     @Builder
-    public Users(String email, String password, String nickname, String provider, String providerId) {
+    public Users(Long userId, String email, String password, String nickname, String provider, String providerId) {
+        this.userId = userId;
         this.email = email;
         this.password = password;
         this.nickname = nickname;

@@ -29,7 +29,7 @@
         <img src="/images/image.png" alt="몽글몽글">
     </div>
     <nav>
-        <a href="/api/diary">일기 작성</a>
+        <a href="/write">일기 작성</a>
         <a href="/diarylist">일기 목록</a>
         <a href="/store">스토어</a>
         <a href="/api/user/me">마이페이지</a>
@@ -44,28 +44,40 @@
             <img src="/images/potion_1.png" alt="슬픔 아이템">
             <div class="item-name">슬픔이 사라지는 물약</div>
             <div class="item-price">₩2,999</div>
-            <button class="btn">구매</button>
+            <form action="/pay/ready" method="post">
+                <input type="hidden" name="itemId" value="1">
+                <button type="submit" class="btn">구매</button>
+            </form>
         </div>
 
         <div class="item">
             <img src="/images/potion_4.png" alt="기쁨 아이템">
             <div class="item-name">기쁨 두배 물약</div>
             <div class="item-price">₩2,999</div>
-            <button class="btn">구매</button>
+            <form action="/pay/ready" method="post">
+                <input type="hidden" name="itemId" value="2">
+                <button type="submit" class="btn">구매</button>
+            </form>
         </div>
 
         <div class="item">
             <img src="/images/potion_3.png" alt="분노 아이템">
             <div class="item-name">분노가 사라지는 물약</div>
             <div class="item-price">₩2,999</div>
-            <button class="btn">구매</button>
+            <form action="/pay/ready" method="post">
+                <input type="hidden" name="itemId" value="3">
+                <button type="submit" class="btn">구매</button>
+            </form>
         </div>
 
         <div class="item">
             <img src="/images/potion_2.png" alt="놀람 아이템">
             <div class="item-name">놀람이 사라지는 물약</div>
             <div class="item-price">₩2,999</div>
-            <button class="btn">구매</button>
+            <form action="/pay/ready" method="post">
+                <input type="hidden" name="itemId" value="4">
+                <button type="submit" class="btn">구매</button>
+            </form>
         </div>
 
     </div>
