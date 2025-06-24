@@ -128,6 +128,12 @@
         .btn:hover {
           background: #ffa577;
         }
+
+        #emotion-result {
+          text-align: center;
+          font-weight: bold;
+          color: #ff8243;
+        }
     </style>
 </head>
 <body>
@@ -137,8 +143,7 @@
     </div>
 
     <nav class="nav-center">
-        <a href="
-">일기 작성</a>
+        <a href="/write">일기 작성</a>
         <a href="/diarylist">일기 목록</a>
         <a href="/store">스토어</a>
         <a href="/api/user/me">마이페이지</a>
@@ -159,10 +164,44 @@
         <h2>오늘의 감정을 기록해보세요 ✍️</h2>
         <form action="/api/diary" method="post">
             <input type="text" name="title" placeholder="제목">
-            <textarea name="content" placeholder="오늘의 감정을 자유롭게 적어보세요..."></textarea>
-            <button class="btn" type="submit">일기 저장</button>
+            <textarea id="diary-content" name="content" placeholder="오늘의 감정을 자유롭게 적어보세요..."></textarea>
+
+            <!-- 감정 분석 결과를 함께 보내고 싶을 경우 -->
+            <input type="hidden" name="emotion" id="emotion-hidden">
+
+            <button type="submit" class="btn">일기 저장</button>
         </form>
+
+        <button type="button" class="btn" onclick="analyzeEmotion()">감정 분석</button>
+        <p id="emotion-result"></p>
     </div>
 </main>
+
+<script>
+    async function analyzeEmotion() {
+      const content = document.getElementById("diary-content").value;
+
+      if (!content.trim()) {
+          alert("일기 내용을 입력해주세요.");
+          return;
+      }
+
+      const response = await fetch("http://localhost:5001/predict-emotion", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ content: content })
+      });
+
+      const result = await response.json();
+
+      // 결과 표시
+      document.getElementById("emotion-result").innerText = `감정 분석 결과: ${result.emotion}`;
+
+      // hidden 필드에 감정 저장
+      document.getElementById("emotion-hidden").value = result.emotion;
+    }
+</script>
 </body>
 </html>
